@@ -1,0 +1,211 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>授權等級評估工具 (Empowerment Matrix)</title>
+    <style>
+        body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background-color: #f4f7f6; color: #333; line-height: 1.6; padding: 20px; }
+        .container { max-width: 800px; margin: auto; background: #fff; padding: 30px; border-radius: 10px; box-shadow: 0 4px 6px rgba(0,0,0,0.1); }
+        h1 { text-align: center; color: #2c3e50; }
+        .intro { text-align: center; color: #666; margin-bottom: 30px; }
+        .question-card { background: #fdfdfd; border-left: 5px solid #3498db; padding: 20px; margin-bottom: 20px; border-radius: 4px; box-shadow: 0 1px 3px rgba(0,0,0,0.05); }
+        .question-title { font-weight: bold; font-size: 1.1em; margin-bottom: 15px; }
+        .options label { display: block; background: #ecf0f1; padding: 12px; margin-bottom: 8px; border-radius: 4px; cursor: pointer; transition: 0.2s; }
+        .options label:hover { background: #dcdde1; }
+        input[type="radio"] { margin-right: 10px; }
+        .submit-btn { display: block; width: 100%; padding: 15px; background: #27ae60; color: white; border: none; border-radius: 5px; font-size: 1.2em; cursor: pointer; transition: 0.3s; margin-top: 20px; }
+        .submit-btn:hover { background: #219150; }
+        #result-section { display: none; margin-top: 40px; padding: 25px; border-radius: 8px; border: 2px solid #27ae60; background: #f0fff4; }
+        .level-title { font-size: 1.5em; color: #2c3e50; font-weight: bold; margin-bottom: 10px; }
+        .dos-donts { display: flex; gap: 20px; margin-top: 20px; }
+        .do-box, .dont-box { flex: 1; padding: 15px; border-radius: 5px; }
+        .do-box { background: #e8f5e9; border-left: 4px solid #4caf50; }
+        .dont-box { background: #ffebee; border-left: 4px solid #f44336; }
+        
+        @media (max-width: 600px) { .dos-donts { flex-direction: column; } }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <h1>授權等級評估工具</h1>
+    <p class="intro">請根據目前專案與部屬狀況，客觀點選以下 8 個問題。系統將自動計算並建議最合適的「管理者陪跑模式」。</p>
+    
+    <form id="assessmentForm">
+        <!-- Q1 -->
+        <div class="question-card">
+            <div class="question-title">1. 被授權者的專業能力與經驗 (15%)</div>
+            <div class="options">
+                <label><input type="radio" name="q1" value="15" required> 曾有類似成功經驗，具備獨立解決問題的技能</label>
+                <label><input type="radio" name="q1" value="8"> 有部分基礎，但需要引導與確認</label>
+                <label><input type="radio" name="q1" value="0"> 需從頭學起，或過往執行類似任務時常卡關</label>
+            </div>
+        </div>
+        <!-- Q2 -->
+        <div class="question-card">
+            <div class="question-title">2. 意願與職涯渴望 (15%)</div>
+            <div class="options">
+                <label><input type="radio" name="q2" value="15" required> 主動爭取，將此視為升遷或能力突破的關鍵機會</label>
+                <label><input type="radio" name="q2" value="8"> 願意配合，但不算是高度熱忱</label>
+                <label><input type="radio" name="q2" value="0"> 意願低落，害怕承擔，或認為只是麻煩</label>
+            </div>
+        </div>
+        <!-- Q3 -->
+        <div class="question-card">
+            <div class="question-title">3. 身心狀態與時間餘裕 (10%)</div>
+            <div class="options">
+                <label><input type="radio" name="q3" value="10" required> 目前工作量合理，有足夠時間專注投入</label>
+                <label><input type="radio" name="q3" value="5"> 稍微緊湊，但能透過重新排程擠出時間</label>
+                <label><input type="radio" name="q3" value="0"> 嚴重超載，或近期個人狀態不佳無暇他顧</label>
+            </div>
+        </div>
+        <!-- Q4 -->
+        <div class="question-card">
+            <div class="question-title">4. 任務失敗的嚴重性與容錯率 (15%)</div>
+            <div class="options">
+                <label><input type="radio" name="q4" value="15" required> 容錯率高，失敗成本低 (如內部測試)</label>
+                <label><input type="radio" name="q4" value="8"> 失敗會造成不便或損失，但可補救</label>
+                <label><input type="radio" name="q4" value="0"> 失敗後果極嚴重 (如違法、巨大虧損、流失大客戶)</label>
+            </div>
+        </div>
+        <!-- Q5 -->
+        <div class="question-card">
+            <div class="question-title">5. 任務影響層面與複雜度 (15%)</div>
+            <div class="options">
+                <label><input type="radio" name="q5" value="15" required> 影響範圍限於單一部門，利害關係人單純</label>
+                <label><input type="radio" name="q5" value="8"> 需與少數跨部門協作，有一定複雜度</label>
+                <label><input type="radio" name="q5" value="0"> 牽涉高階政治角力、多部門利益或外部重要公關</label>
+            </div>
+        </div>
+        <!-- Q6 -->
+        <div class="question-card">
+            <div class="question-title">6. 發展階段與緊急程度 (10%)</div>
+            <div class="options">
+                <label><input type="radio" name="q6" value="10" required> 早期探索階段或時間寬裕，允許來回修正</label>
+                <label><input type="radio" name="q6" value="5"> 有明確時程壓力，但還在掌控中</label>
+                <label><input type="radio" name="q6" value="0"> 火燒眉毛的危機處理，需立刻決斷止血</label>
+            </div>
+        </div>
+        <!-- Q7 -->
+        <div class="question-card">
+            <div class="question-title">7. 雙方信任與默契 (10%)</div>
+            <div class="options">
+                <label><input type="radio" name="q7" value="10" required> 長期合作，溝通順暢，員工能精準抓到主管標準</label>
+                <label><input type="radio" name="q7" value="5"> 合作一段時間，尚在磨合某些做事習慣</label>
+                <label><input type="radio" name="q7" value="0"> 新進員工、剛接手新團隊，或過往曾有信任危機</label>
+            </div>
+        </div>
+        <!-- Q8 -->
+        <div class="question-card">
+            <div class="question-title">8. 資源支持與資訊透明度 (10%)</div>
+            <div class="options">
+                <label><input type="radio" name="q8" value="10" required> 員工能輕易取得所需預算、數據及跨部門支援</label>
+                <label><input type="radio" name="q8" value="5"> 資訊部分開放，有時需要主管出面要資源</label>
+                <label><input type="radio" name="q8" value="0"> 資訊被封鎖，需要「主管的頭銜」才能推動</label>
+            </div>
+        </div>
+
+        <button type="button" class="submit-btn" onclick="calculateResult()">計算結果</button>
+    </form>
+
+    <div id="result-section">
+        <h2 class="level-title" id="result-level"></h2>
+        <p><strong>總分：</strong> <span id="result-score" style="font-size:1.2em; color:#e74c3c; font-weight:bold;"></span> / 100 分</p>
+        <p id="result-desc"></p>
+        
+        <div class="dos-donts">
+            <div class="do-box">
+                <h3 style="color:#2e7d32; margin-top:0;">🟢 管理者該做的事 (Do)</h3>
+                <ul id="do-list" style="padding-left: 20px;"></ul>
+            </div>
+            <div class="dont-box">
+                <h3 style="color:#c62828; margin-top:0;">🔴 絕對不要做的事 (Don't)</h3>
+                <ul id="dont-list" style="padding-left: 20px;"></ul>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    const levelData = [
+        {
+            max: 40,
+            title: "Level 1：指令型 (Tell)",
+            desc: "【陪跑者姿態】跑在最前面帶路。任務風險較高或員工尚無經驗，主管決定，員工執行。",
+            dos: ["給予清晰的邊界與標準：明確告訴員工成功標準與不能踩的紅線。","確認理解：請員工重述一次，確保雙方認知一致。","承擔成敗責任：因為決策是主管定的，主管必須扛下最終責任。"],
+            donts: ["給出模糊指令：如「你看著辦」、「給我好結果就好」。","事後諸葛與責備：當員工照做卻失敗時，不能怪罪員工不會變通。"]
+        },
+        {
+            max: 60,
+            title: "Level 2：諮詢型 (Consult)",
+            desc: "【陪跑者姿態】跑在側前方，指定路線讓員工去探路。員工負責調查與提議，主管做最終決定。",
+            dos: ["設定提案框架：告訴員工你需要他評估哪些維度(如成本、風險)。","說明決策背後的Why：拒絕或採用提案，都必須解釋為什麼，培養員工Business Sense。"],
+            donts: ["假民主真獨裁：心裡早有答案卻叫員工提案，最後又全部打翻。","第一時間批評：聽到不成熟的想法直接說行不通，而非用提問引導。"]
+        },
+        {
+            max: 80,
+            title: "Level 3：共創型 (Agree)",
+            desc: "【陪跑者姿態】並肩作戰，一起拿著地圖找路。員工與主管共同討論，達成共識後才執行。",
+            dos: ["扮演提問者與挑戰者：用「如果發生某狀況怎麼辦」來測試計畫。","紀錄共識：討論出結論後，確保有文字紀錄作為執行原則。"],
+            donts: ["利用職權施壓：意見不同時說「聽我的就對了」。","單方面推翻共識：沒有知會員工私下改變說好的計畫。"]
+        },
+        {
+            max: 90,
+            title: "Level 4：回報型 (Advise & Inquire)",
+            desc: "【陪跑者姿態】跑在側後方，準備遞水。員工全權決定並執行，僅在關鍵節點向主管回報。",
+            dos: ["提前約定檢核點：事先講好何時更新進度或什麼條件下需通報。","扮演清道夫：主動詢問是否需要出面協調跨部門資源。","容許小錯誤：不影響大局的情況下，讓員工用自己的方式做。"],
+            donts: ["突擊檢查 (微觀管理)：在非約定時間跑去問進度或看草稿。","越級指揮：繞過該員工，直接去指揮他的下屬或協力廠商。"]
+        },
+        {
+            max: 100,
+            title: "Level 5：完全賦權 (Delegate)",
+            desc: "【陪跑者姿態】站在終點線準備鼓掌。員工是該領域專家，主管不過問細節，只看最終結果。",
+            dos: ["公開讚賞與背書：在團隊前明確表示此專案由該員工主導，把光環留給他。","關注職涯下一步：思考還能給這位優秀員工什麼更大的挑戰與舞台。"],
+            donts: ["干涉「怎麼做(How)」：只要結果符合，絕不去指手畫腳細節。","搶奪功勞：專案成功時，對外暗示是自己的英明領導。"]
+        }
+    ];
+
+    function calculateResult() {
+        let totalScore = 0;
+        let allAnswered = true;
+        
+        for (let i = 1; i <= 8; i++) {
+            const radios = document.getElementsByName('q' + i);
+            let answered = false;
+            for (const radio of radios) {
+                if (radio.checked) {
+                    totalScore += parseInt(radio.value);
+                    answered = true;
+                    break;
+                }
+            }
+            if (!answered) allAnswered = false;
+        }
+
+        if (!allAnswered) {
+            alert("請完成所有 8 個問題的點選！");
+            return;
+        }
+
+        let resultData = levelData.find(level => totalScore <= level.max);
+        
+        document.getElementById('result-score').innerText = totalScore;
+        document.getElementById('result-level').innerText = resultData.title;
+        document.getElementById('result-desc').innerText = resultData.desc;
+        
+        const doList = document.getElementById('do-list');
+        const dontList = document.getElementById('dont-list');
+        
+        doList.innerHTML = resultData.dos.map(item => `<li>${item}</li>`).join('');
+        dontList.innerHTML = resultData.donts.map(item => `<li>${item}</li>`).join('');
+
+        document.getElementById('result-section').style.display = 'block';
+        
+        // 平滑滾動到結果區域
+        document.getElementById('result-section').scrollIntoView({ behavior: 'smooth' });
+    }
+</script>
+
+</body>
+</html>
